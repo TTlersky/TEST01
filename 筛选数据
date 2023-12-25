@@ -1,0 +1,53 @@
+import pandas as pd  
+import matplotlib.pyplot as plt  
+  
+def calculate_heating_data(data, start_date, end_date):  
+    """  
+    计算给定日期范围内的供暖数据。  
+    """  
+    # 提取供暖日期范围内的数据  
+    heating_data = data[(data['Start Date'] >= start_date) & (data['End Date'] <= end_date)]  
+      
+    # 计算耗能量（这里假设有一个名为'Energy Consumption'的列）  
+    heating_data['Total Energy Consumption'] = heating_data['Energy Consumption'].sum()  
+      
+    return heating_data  
+  
+def plot_heating_energy_curve(data, year):  
+    """  
+    绘制指定年份的供暖耗能曲线。  
+    """  
+    # 提取指定年份的数据  
+    year_data = data[data['Year'] == year]  
+      
+    # 计算每个月的耗能量（这里假设有一个名为'Monthly Energy Consumption'的列）  
+    monthly_data = year_data.groupby('Month')['Monthly Energy Consumption'].sum().reset_index()  
+      
+    # 绘制耗能曲线  
+    plt.figure(figsize=(10, 6))  
+    plt.plot(monthly_data['Month'], monthly_data['Monthly Energy Consumption'], marker='o')  
+    plt.title(f"Heating Energy Consumption Curve for {year}")  
+    plt.xlabel("Month")  
+    plt.ylabel("Energy Consumption (kWh)")  
+    plt.grid(True)  
+    plt.show()  
+  
+# 示例数据（实际使用时，你需要替换为你的数据源）  
+data = pd.DataFrame({  
+    'Year': [2020, 2020, 2021, 2021],  
+    'Start Date': ['2020-01-01', '2020-11-15', '2021-10-01', '2021-11-15'],  
+    'End Date': ['2020-12-31', '2020-12-31', '2021-12-31', '2021-12-31'],  
+    'Energy Consumption': [1000, 500, 1500, 750],  
+    'Monthly Energy Consumption': [100, 50, 150, 75]  # 这里假设每个月的耗能量是固定的，实际数据可能会有所不同。  
+})  
+  
+# 指定供暖开始和结束日期（这里假设是每年的11月15日至次年的3月15日）  
+start_date = '2020-11-15'  
+end_date = '2021-03-15'  
+  
+# 计算指定日期范围内的供暖数据  
+heating_data = calculate_heating_data(data, start_date, end_date)  
+print(heating_data)  # 输出计算结果，这里以2020年为例。实际使用时，你需要从你的数据源中获取数据。  
+  
+# 绘制供暖耗能曲线（这里以2020年为例）  
+plot_heating_energy_curve(heating_data, 2020)  # 你可以根据需要修改年份。
